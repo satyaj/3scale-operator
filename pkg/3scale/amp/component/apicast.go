@@ -43,7 +43,7 @@ func (apicast *Apicast) StagingService() *v1.Service {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "apicast-staging",
 			Labels: map[string]string{
-				"app":                          apicast.Options.appLabel,
+				"app":                          apicast.Options.AppLabel,
 				"threescale_component":         "apicast",
 				"threescale_component_element": "staging",
 			},
@@ -77,7 +77,7 @@ func (apicast *Apicast) ProductionService() *v1.Service {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "apicast-production",
 			Labels: map[string]string{
-				"app":                          apicast.Options.appLabel,
+				"app":                          apicast.Options.AppLabel,
 				"threescale_component":         "apicast",
 				"threescale_component_element": "production",
 			},
@@ -108,13 +108,13 @@ func (apicast *Apicast) StagingDeploymentConfig() *appsv1.DeploymentConfig {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "apicast-staging",
 			Labels: map[string]string{
-				"app":                          apicast.Options.appLabel,
+				"app":                          apicast.Options.AppLabel,
 				"threescale_component":         "apicast",
 				"threescale_component_element": "staging",
 			},
 		},
 		Spec: appsv1.DeploymentConfigSpec{
-			Replicas: *apicast.Options.stagingReplicas,
+			Replicas: apicast.Options.StagingReplicas,
 			Selector: map[string]string{
 				"deploymentConfig": "apicast-staging",
 			},
@@ -156,7 +156,7 @@ func (apicast *Apicast) StagingDeploymentConfig() *appsv1.DeploymentConfig {
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
 						"deploymentConfig":             "apicast-staging",
-						"app":                          apicast.Options.appLabel,
+						"app":                          apicast.Options.AppLabel,
 						"threescale_component":         "apicast",
 						"threescale_component_element": "staging",
 					},
@@ -188,7 +188,7 @@ func (apicast *Apicast) StagingDeploymentConfig() *appsv1.DeploymentConfig {
 							Image:           "amp-apicast:latest",
 							ImagePullPolicy: v1.PullIfNotPresent,
 							Name:            "apicast-staging",
-							Resources:       *apicast.Options.stagingResourceRequirements,
+							Resources:       apicast.Options.StagingResourceRequirements,
 							LivenessProbe: &v1.Probe{
 								Handler: v1.Handler{HTTPGet: &v1.HTTPGetAction{
 									Path: "/status/live",
@@ -221,13 +221,13 @@ func (apicast *Apicast) ProductionDeploymentConfig() *appsv1.DeploymentConfig {
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "apicast-production",
 			Labels: map[string]string{
-				"app":                          apicast.Options.appLabel,
+				"app":                          apicast.Options.AppLabel,
 				"threescale_component":         "apicast",
 				"threescale_component_element": "production",
 			},
 		},
 		Spec: appsv1.DeploymentConfigSpec{
-			Replicas: *apicast.Options.productionReplicas,
+			Replicas: apicast.Options.ProductionReplicas,
 			Selector: map[string]string{
 				"deploymentConfig": "apicast-production",
 			},
@@ -270,7 +270,7 @@ func (apicast *Apicast) ProductionDeploymentConfig() *appsv1.DeploymentConfig {
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
 						"deploymentConfig":             "apicast-production",
-						"app":                          apicast.Options.appLabel,
+						"app":                          apicast.Options.AppLabel,
 						"threescale_component":         "apicast",
 						"threescale_component_element": "production",
 					},
@@ -315,7 +315,7 @@ func (apicast *Apicast) ProductionDeploymentConfig() *appsv1.DeploymentConfig {
 							Image:           "amp-apicast:latest",
 							ImagePullPolicy: v1.PullIfNotPresent,
 							Name:            "apicast-production",
-							Resources:       *apicast.Options.productionResourceRequirements,
+							Resources:       apicast.Options.ProductionResourceRequirements,
 							LivenessProbe: &v1.Probe{
 								Handler: v1.Handler{HTTPGet: &v1.HTTPGetAction{
 									Path: "/status/live",
@@ -382,12 +382,12 @@ func (apicast *Apicast) EnvironmentConfigMap() *v1.ConfigMap {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   "apicast-environment",
-			Labels: map[string]string{"threescale_component": "apicast", "app": apicast.Options.appLabel},
+			Labels: map[string]string{"threescale_component": "apicast", "app": apicast.Options.AppLabel},
 		},
 		Data: map[string]string{
-			"APICAST_MANAGEMENT_API": apicast.Options.managementAPI,
-			"OPENSSL_VERIFY":         apicast.Options.openSSLVerify,
-			"APICAST_RESPONSE_CODES": apicast.Options.responseCodes,
+			"APICAST_MANAGEMENT_API": apicast.Options.ManagementAPI,
+			"OPENSSL_VERIFY":         apicast.Options.OpenSSLVerify,
+			"APICAST_RESPONSE_CODES": apicast.Options.ResponseCodes,
 		},
 	}
 }
