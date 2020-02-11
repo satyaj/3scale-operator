@@ -7,7 +7,6 @@ import (
 
 	"github.com/3scale/3scale-operator/pkg/3scale/amp/component"
 	"github.com/3scale/3scale-operator/pkg/3scale/amp/operator"
-	appsv1alpha1 "github.com/3scale/3scale-operator/pkg/apis/apps/v1alpha1"
 	"github.com/3scale/3scale-operator/pkg/helper"
 	v1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -39,7 +38,7 @@ func MigrateSystemSMTPData(cl client.Client, ns string) error {
 	}
 
 	if k8serrors.IsNotFound(err) {
-		system, err := getSystemComponentForSMTPSecret()
+		system, err := GetSystemComponent()
 		if err != nil {
 			return err
 		}
@@ -73,19 +72,4 @@ func MigrateSystemSMTPData(cl client.Client, ns string) error {
 	}
 
 	return nil
-}
-
-func getSystemComponentForSMTPSecret() (*component.System, error) {
-	optProv := component.SystemOptionsBuilder{}
-
-	optProv.AppLabel(appsv1alpha1.DefaultAppLabel)
-	optProv.AmpRelease("-")
-	optProv.ApicastRegistryURL("-")
-	optProv.TenantName("-")
-	optProv.WildcardDomain("-")
-	systemOptions, err := optProv.Build()
-	if err != nil {
-		return nil, err
-	}
-	return component.NewSystem(systemOptions), nil
 }

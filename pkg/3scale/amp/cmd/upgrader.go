@@ -34,7 +34,13 @@ func upgradeCommandEntrypoint(cmd *cobra.Command, args []string) {
 
 	err = upgrader.MigrateSystemSMTPData(cl, upgradeNamespace)
 	if err != nil {
-		fmt.Printf("failed to check current 3scale installation: %v\n", err)
+		fmt.Printf("failed to migrate System SMTP data: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.UpgradeSystemPreHook(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Printf("failed to migrate System SMTP data: %v\n", err)
 		os.Exit(1)
 	}
 
