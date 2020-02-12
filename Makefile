@@ -124,7 +124,7 @@ templates:
 	$(MAKE) -C $(TEMPLATES_MAKEFILE_PATH) clean all
 
 ## upgrade-tool: Build upgrade tool
-upgrade-tool: $(TEMPLATES_MAKEFILE_PATH)/main.go $(TEMPLATES_MAKEFILE_PATH)/cmd/upgrader.go
+upgrade-tool: $(TEMPLATES_MAKEFILE_PATH)/main.go $(TEMPLATES_MAKEFILE_PATH)/cmd/upgrader.go $(shell find $(TEMPLATES_MAKEFILE_PATH)/cmd/upgrader -name '*.go')
 	go build -o $@ $<
 
 ## clean: Clean build resources
