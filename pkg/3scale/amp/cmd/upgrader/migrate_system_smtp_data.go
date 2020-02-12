@@ -18,9 +18,6 @@ func MigrateSystemSMTPData(cl client.Client, ns string) error {
 	existingConfigMap := &v1.ConfigMap{}
 	configMapNamespacedName := types.NamespacedName{Name: "smtp", Namespace: ns}
 	err := cl.Get(context.TODO(), configMapNamespacedName, existingConfigMap)
-	if err != nil {
-		return err
-	}
 	if err != nil && !k8serrors.IsNotFound(err) {
 		return err
 	}

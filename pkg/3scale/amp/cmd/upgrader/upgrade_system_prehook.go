@@ -49,64 +49,26 @@ func ensureDeploymentConfigPreHookPodEnvVars(desired, existing *appsv1.Deploymen
 
 	// replace SMTP_* vars
 	for i := range existingPreHookPod.Env {
-		if existingPreHookPod.Env[i].Name == "SMTP_ADDRESS" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_ADDRESS")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
-			}
-		}
-
-		if existingPreHookPod.Env[i].Name == "SMTP_USER_NAME" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_USER_NAME")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
-			}
-		}
-
-		if existingPreHookPod.Env[i].Name == "SMTP_PASSWORD" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_PASSWORD")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
-			}
-		}
-
-		if existingPreHookPod.Env[i].Name == "SMTP_DOMAIN" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_DOMAIN")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
-			}
-		}
-
-		if existingPreHookPod.Env[i].Name == "SMTP_PORT" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_PORT")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
-			}
-		}
-
-		if existingPreHookPod.Env[i].Name == "SMTP_AUTHENTICATION" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_AUTHENTICATION")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
-			}
-		}
-
-		if existingPreHookPod.Env[i].Name == "SMTP_OPENSSL_VERIFY_MODE" {
-			desiredEnvVar := findEnvByNameOrPanic(desiredPreHookPod.Env, "SMTP_OPENSSL_VERIFY_MODE")
-			if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
-				existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
-				changed = true
+		envVars := []string{
+			"SMTP_ADDRESS",
+			"SMTP_USER_NAME",
+			"SMTP_PASSWORD",
+			"SMTP_DOMAIN",
+			"SMTP_PORT",
+			"SMTP_AUTHENTICATION",
+			"SMTP_OPENSSL_VERIFY_MODE"}
+		for _, envVar := range envVars {
+			if existingPreHookPod.Env[i].Name == envVar {
+				desiredEnvVar := FindEnvByNameOrPanic(desiredPreHookPod.Env, envVar)
+				if !reflect.DeepEqual(existingPreHookPod.Env[i].ValueFrom, desiredEnvVar.ValueFrom) {
+					existingPreHookPod.Env[i].ValueFrom = desiredEnvVar.ValueFrom
+					changed = true
+				}
 			}
 		}
 	}
 
-	if !findEnvByName(existingPreHookPod.Env, component.SystemSecretSystemSeedMasterAccessTokenFieldName) {
+	if !FindEnvByName(existingPreHookPod.Env, component.SystemSecretSystemSeedMasterAccessTokenFieldName) {
 		// Add MASTER_ACCESS_TOKEN ref
 		existingPreHookPod.Env = append(existingPreHookPod.Env,
 			v1.EnvVar{
@@ -135,23 +97,4 @@ func ensureDeploymentConfigPreHookPodCommand(desired, existing *appsv1.Deploymen
 		changed = true
 	}
 	return changed
-}
-
-func findEnvByNameOrPanic(a []v1.EnvVar, x string) v1.EnvVar {
-	for _, n := range a {
-		if x == n.Name {
-			return n
-		}
-	}
-
-	panic(fmt.Sprintf("env var %s not found", x))
-}
-
-func findEnvByName(a []v1.EnvVar, x string) bool {
-	for _, n := range a {
-		if x == n.Name {
-			return true
-		}
-	}
-	return false
 }

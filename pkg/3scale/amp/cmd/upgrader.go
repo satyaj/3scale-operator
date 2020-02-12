@@ -47,7 +47,43 @@ func upgradeCommandEntrypoint(cmd *cobra.Command, args []string) {
 
 	err = upgrader.UpgradeSystemPreHook(cl, upgradeNamespace)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to migrate System SMTP data: %v\n", err)
+		fmt.Fprintf(os.Stderr, "failed to migrate System pre hook config: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.UpgradeSystemAppContainerEnvs(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to migrate System containers env: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.UpgradeSystemSidekiqEnvs(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to migrate System sidekiq env: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.MigrateS3Deployment(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to migrate S3 deployment: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.PatchAMPRelese(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to patch amp release: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.UpgradeImages(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to smtp config map: %v\n", err)
+		os.Exit(1)
+	}
+
+	err = upgrader.DeleteSMTPConfigMap(cl, upgradeNamespace)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to smtp config map: %v\n", err)
 		os.Exit(1)
 	}
 

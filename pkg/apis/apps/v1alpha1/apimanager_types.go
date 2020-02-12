@@ -23,7 +23,7 @@ const (
 const (
 	DefaultAppLabel                    = "3scale-api-management"
 	defaultTenantName                  = "3scale"
-	defaultImageStreamImportInsecure   = false
+	DefaultImageStreamImportInsecure   = false
 	defaultResourceRequirementsEnabled = true
 )
 
@@ -456,7 +456,7 @@ func (apimanager *APIManager) setAPIManagerCommonSpecDefaults() bool {
 
 	tmpDefaultAppLabel := DefaultAppLabel
 	tmpDefaultTenantName := defaultTenantName
-	tmpDefaultImageStreamTagImportInsecure := defaultImageStreamImportInsecure
+	tmpDefaultImageStreamTagImportInsecure := DefaultImageStreamImportInsecure
 	tmpDefaultResourceRequirementsEnabled := defaultResourceRequirementsEnabled
 
 	if spec.AppLabel == nil {
